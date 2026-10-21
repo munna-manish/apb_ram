@@ -1,3 +1,4 @@
+`timescale 1ns / 1ps
 module apb_master(
     input pclk, reset_n,
     input transfer,
@@ -16,7 +17,8 @@ module apb_master(
     reg [1:0] current_state;
     reg [1:0] next_state;
     
-    always @(posedge clk or negedge reset_n) begin
+    
+    always @(posedge pclk or negedge reset_n) begin
         if(!reset_n) 
             current_state = IDLE;
         else
@@ -48,7 +50,7 @@ module apb_master(
         endcase
     end
 
-    always @(posedge clk or negedge reset_n) begin
+    always @(posedge pclk or negedge reset_n) begin
         if(!reset_n) begin
             pselx = 1'b0;
             penable = 1'b0;
@@ -75,5 +77,6 @@ module apb_master(
                 end
             endcase
         end
+    
     end
 endmodule
