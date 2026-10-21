@@ -36,11 +36,13 @@ class Transaction #(parameter SIZE=32, parameter ADDR_WIDTH = 32);
 endclass
 
 class Generator #(parameter SIZE=32);
+    virtual apb_if vif;
     Transaction #(SIZE) trx;
     mailbox #(Transaction #(SIZE)) mbx;
     int repeat_count;
     event ended;
-    function new(mailbox #(Transaction #(SIZE)) mbx, int count);
+    function new(virtual apb_if vif, mailbox #(Transaction #(SIZE)) mbx, int count);
+        this.vif = vif;
         this.mbx = mbx;
         this.repeat_count = count;
     endfunction
@@ -50,6 +52,7 @@ class Generator #(parameter SIZE=32);
             assert(trx.randomize());
             trx.display("GEN");
             mbx.put(trx);
+            
         end
         ->ended;
     endtask
