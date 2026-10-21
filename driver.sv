@@ -61,17 +61,21 @@ class Driver #(parameter SIZE = 32);
         forever begin
             mbx.get(trx);
             @(posedge vif.clk)
-            vif.pselx = 1'b1;
-            vif.penable = 1'b0;
-            vif.paddr = trx.paddr;
+            vif.pselx <= 1'b1;
+            vif.penable <= 1'b1;
+            vif.pwrite <= trx.pwrite;
+            vif.paddr <= trx.paddr;
             if(trx.pwrite)
-                trx.pwdata = vif.pwdata;
+                vif.pwdata <= trx.pwdata;
             @(posedge vif.clk)
-            vif.penable = 1'b1;
+            vif.penable <= 1'b1;
+            while(!vif.pready) begin
+                @(posedge vif.clk);
+            end
             if(!trx.pwrite) 
-                vif.prdata = trx.prdata;
-            vif.pselx = 1'b0;
-            vif.penable = 1'b0;
+                vif.prdata <= trx.prdata;
+            vif.pselx <= 1'b0;
+            vif.penable <= 1'b0;
         end
     endtask
 endclass
